@@ -16,7 +16,7 @@ class ProductForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(2) // 👈 set 2-column layout
+            ->columns(2)
             ->components([
                 TextInput::make('title')
                     ->live(true)
