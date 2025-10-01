@@ -7,6 +7,7 @@ use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Products\Pages\ProductImages;
+use App\Filament\Resources\Products\Pages\ProductVariations;
 use App\Filament\Resources\Products\Pages\ProductVariationTypes;
 use App\Filament\Resources\Products\Schemas\ProductForm;
 use App\Filament\Resources\Products\Tables\ProductsTable;
@@ -19,6 +20,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductResource extends Resource
 {
@@ -54,6 +56,7 @@ class ProductResource extends Resource
             'edit' => EditProduct::route('/{record}/edit'),
             'images' => ProductImages::route('/{record}/images'),
             'variation-types' => ProductVariationTypes::route('/{record}/variation-types'),
+            'product-variations' => ProductVariations::route('/{record}/product-variations'),
         ];
     }
 
@@ -63,6 +66,7 @@ class ProductResource extends Resource
             EditProduct::class,
             ProductImages::class,
             ProductVariationTypes::class,
+            ProductVariations::class,
         ]);
     }
 
@@ -71,4 +75,11 @@ class ProductResource extends Resource
         $user = Filament::auth()->user();
         return $user && $user->hasRole(RolesEnum::Vendor);
     }
+
+
+    public function scopeForVendor(Builder $query): Builder
+    {
+        return $query->where('vendor_id', auth()->id());
+    }
+
 }

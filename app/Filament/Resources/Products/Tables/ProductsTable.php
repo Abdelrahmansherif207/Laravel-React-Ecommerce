@@ -21,10 +21,13 @@ class ProductsTable
         return $table
             ->columns([
                 SpatieMediaLibraryImageColumn::make('images')
+                    ->imageWidth(100)
+                    ->imageHeight(100)
                     ->collection('images')
                     ->limit(1)
                     ->conversion('thumb')
                     ->label('images'),
+
 
                 TextColumn::make('title')
                     ->sortable()

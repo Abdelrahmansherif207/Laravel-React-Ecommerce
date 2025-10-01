@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->sidebarWidth('14rem')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
@@ -63,7 +64,8 @@ class AdminPanelProvider extends PanelProvider
 //            ]);
     }
 
-    public function boot() {
+    public function boot()
+    {
         Model::unguard();
     }
 }

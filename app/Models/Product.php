@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\ProductStatusEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -12,6 +14,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class Product extends Model implements HasMedia
 {
     use InteractsWithMedia;
+
 
     public function department(): BelongsTo
     {
@@ -23,17 +26,47 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Category::class);
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('images')
+            ->useDisk('public');
+    }
+
+
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-            ->width(100);
+            ->width(100)
+            ->height(100)
+            ->performOnCollections('images');
+
         $this->addMediaConversion('small')
-            ->width(480);
+            ->width(480)
+            ->performOnCollections('images');
+
         $this->addMediaConversion('large')
-            ->width(1200);
+            ->width(1200)
+            ->performOnCollections('images');
     }
 
-    public function variationTypes(): HasMany {
+
+    public function variationTypes(): HasMany
+    {
         return $this->hasMany(VariationType::class);
+    }
+
+    public function variations(): HasMany
+    {
+        return $this->hasMany(ProductVariation::class);
+    }
+
+    public function scopeForVendor(Builder $query): Builder
+    {
+        return $query->where('created_by', auth()->user()->id);
+    }
+
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('status', ProductStatusEnum::Published);
     }
 }
